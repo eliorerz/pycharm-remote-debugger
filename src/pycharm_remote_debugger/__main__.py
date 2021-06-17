@@ -1,6 +1,6 @@
 import argparse
 
-from .pycharm_remote_debugger import PycharmRemoteDebugger
+from ._pycharm_remote_debugger import PycharmRemoteDebugger
 
 
 def main():

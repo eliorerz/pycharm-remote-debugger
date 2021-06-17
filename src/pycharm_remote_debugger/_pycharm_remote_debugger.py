@@ -1,5 +1,4 @@
 import io
-import logging
 import runpy
 import socket
 import sys
@@ -8,13 +7,7 @@ from contextlib import redirect_stderr
 import pydevd_pycharm
 import waiting
 
-log = logging.getLogger("pycharm_remote_debugger")
-log.setLevel(logging.DEBUG)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-log.addHandler(handler)
+from ._logger import log
 
 
 class PycharmRemoteDebugger:
@@ -32,8 +25,8 @@ class PycharmRemoteDebugger:
         with redirect_stderr(f):
             try:
                 log.info(f"Attempting to connect to remote IDE {self._remote_machine}:{self._port}")
-
                 pydevd_pycharm.settrace(self._remote_machine, port=self._port, stdoutToServer=True, stderrToServer=True)
+                log.info(f"Debugger connected to IDE successfully")
                 return True
             except ConnectionRefusedError as e:
                 log.error(f"Error occurred while connecting to remote IDE, {e}")
@@ -60,5 +53,12 @@ class PycharmRemoteDebugger:
         argv = list(sys.argv)
         sys.argv = argv[argv.index("-m") + 1:]
 
-        runpy.run_module(self._module[0], alter_sys=True)
+        try:
+            run_module_as_main = runpy._run_module_as_main
+        except AttributeError:
+            log.warning("Can't find runpy._run_module_as_main module.")
+            runpy.run_module(self._module[0], alter_sys=True)
+        else:
+            run_module_as_main(self._module[0], alter_argv=True)
+
         sys.argv = argv
