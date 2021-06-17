@@ -1,4 +1,5 @@
 import io
+import logging
 import runpy
 import socket
 import sys
@@ -6,6 +7,8 @@ from contextlib import redirect_stderr
 
 import pydevd_pycharm
 import waiting
+
+log = logging.getLogger("pycharm_remote_debugger")
 
 
 class PycharmRemoteDebugger:
@@ -22,9 +25,12 @@ class PycharmRemoteDebugger:
 
         with redirect_stderr(f):
             try:
+                log.info(f"Attempting to connect to remote IDE {self._remote_machine}:{self._port}")
+
                 pydevd_pycharm.settrace(self._remote_machine, port=self._port, stdoutToServer=True, stderrToServer=True)
                 return True
-            except ConnectionRefusedError:
+            except ConnectionRefusedError as e:
+                log.error(f"Error occurred while connecting to remote IDE, {e}")
                 return False
 
     def wait_for_debugger(self, timeout=DEFAULT_CONNECTION_TIMEOUT):
@@ -36,6 +42,7 @@ class PycharmRemoteDebugger:
                 waiting_for="remote debugger to be ready"
             )
         except socket.timeout:
+            log.error(f"Timeout reached after {timeout} seconds")
             if not self._optional:
                 raise
 
@@ -43,6 +50,7 @@ class PycharmRemoteDebugger:
             self.run_module()
 
     def run_module(self):
+        log.info(f"Running module {self._module[0]} with args {self._module[1:]}")
         argv = list(sys.argv)
         sys.argv = argv[argv.index("-m") + 1:]
 
