@@ -25,7 +25,7 @@ pip install pycharm_remote_debugger
    port = 6789
    
    debugger = PycharmRemoteDebugger(remote_addr, int(port))
-   debugger.wait_for_debugger()
+   debugger.debug()
    
    main()  # run your software here
    ```

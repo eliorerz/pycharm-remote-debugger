@@ -3,8 +3,6 @@ import sys
 
 
 class CustomFormatter(logging.Formatter):
-    """Logging Formatter to add colors and count warning / errors"""
-
     grey = "\x1b[38;21m"
     yellow = "\x1b[33;21m"
     green = "\x1b[33;32m"
