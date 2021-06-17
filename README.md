@@ -3,6 +3,11 @@
 With PyCharm you can debug your application using an interpreter that is located on the other computer, 
 for example, on a web server or dedicated test machine.
 
+## Installation 
+```shell
+pip install pycharm_remote_debugger
+```
+
 ### Steps
 1. Create a deployment configuration for a remote interpreter.
    - Ensure that you have SSH access to the remote machine
