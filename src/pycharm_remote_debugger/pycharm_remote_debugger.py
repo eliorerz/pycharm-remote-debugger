@@ -11,7 +11,7 @@ import waiting
 class PycharmRemoteDebugger:
     DEFAULT_CONNECTION_TIMEOUT = 30
 
-    def __init__(self, remote_machine: str, port: int, module: str, optional=False) -> None:
+    def __init__(self, remote_machine: str, port: int, module: str = None, optional=False) -> None:
         self._remote_machine: str = remote_machine
         self._port: int = port
         self._module = module
@@ -39,7 +39,8 @@ class PycharmRemoteDebugger:
             if not self._optional:
                 raise
 
-        self.run_module()
+        if self._module is not None:
+            self.run_module()
 
     def run_module(self):
         argv = list(sys.argv)
