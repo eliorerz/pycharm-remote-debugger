@@ -11,9 +11,10 @@ def main():
                         default=False, type=bool, const=True)
     parser.add_argument("-t", "--timeout", help="Connection timeout", type=int,
                         default=PycharmRemoteDebugger.DEFAULT_CONNECTION_TIMEOUT)
+    parser.add_argument("-m", "--module", help="Module to run", type=str, nargs="...")
 
     args = parser.parse_args()
-    debugger = PycharmRemoteDebugger(args.remote, args.port, args.optional)
+    debugger = PycharmRemoteDebugger(args.remote, args.port, args.module, args.optional)
     debugger.wait_for_debugger(args.timeout)
 
 

@@ -11,19 +11,22 @@ for example, on a web server or dedicated test machine.
     - Specify the port number, and the IDE host address
     - Map the path on the local machine to the path on the remote machine
 4. Make sure you are installing pycharm_remote_debugger on the remote machine/container   
-5. Create and entry point file that execute your code and login to the debugger.
-```python
-from pycharm_remote_debugger import PycharmRemoteDebugger
-
-remote_addr = "10.2.55.1"
-port = 1324
-
-debugger = PycharmRemoteDebugger(remote_addr, int(port))
-debugger.wait_for_debugger()
-
-main()  # run your software here
-``` 
+5. Run your software using pycharm_remote_debugger module: 
+   - Create and entry point file that execute your code and login to the debugger.
+   ```python
+   from pycharm_remote_debugger import PycharmRemoteDebugger
+   
+   remote_addr = "10.2.55.1"
+   port = 6789
+   
+   debugger = PycharmRemoteDebugger(remote_addr, int(port))
+   debugger.wait_for_debugger()
+   
+   main()  # run your software here
+   ```
+   - Use the command line: 
+   ```shell
+   python -m pycharm_remote_debugger -r 10.2.55.1 -p 6789 -m my_module_name -k module_arg1 -s -k module_arg2
+   ```
 6. Start debugger on pycharm
 7. Debug your program :) 
-
-Note: Soon there will be a cli tool for executing any python program (development in progress)

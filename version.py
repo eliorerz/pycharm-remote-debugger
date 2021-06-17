@@ -19,9 +19,10 @@ class GitVersion:
         return out
 
     @classmethod
-    def tag(cls, version: str):
+    def tag(cls, version: str, custom_version: str):
         if version is None:
             return
+        version = custom_version or version
 
         print(f"Adding new tag {version}")
         cls.sys_exec(f"git tag -a {version} -m ".split() + [" '{cls.CI_FLAG} - Version {version}'"])
@@ -65,7 +66,7 @@ class GitVersion:
             pass
 
     @classmethod
-    def main(cls, branch: str):
+    def main(cls, branch: str, custom_version: str):
         print("Starting versioning process...")
         branch_name = branch if branch else cls.get_branch()
         if branch_name not in cls.ALLOWED_BRANCHES and not branch_name.startswith("release"):
@@ -76,13 +77,14 @@ class GitVersion:
         cls.update_branch()
         print("Done")
 
-        cls.tag(cls.increment_version(branch_name))
+        cls.tag(cls.increment_version(branch_name), custom_version)
         print("Versioning process done!")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Version script")
     parser.add_argument("-b", "--branch", help="Branch name", type=str, default=None)
+    parser.add_argument("-v", "--version", help="Custom version", type=str, default=None)
     args = parser.parse_args()
 
-    GitVersion.main(args.branch)
+    GitVersion.main(args.branch, args.version)
