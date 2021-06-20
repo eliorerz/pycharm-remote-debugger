@@ -78,11 +78,10 @@ class PycharmRemoteDebugger:
         log.info(f"Running {self._code_type.name.lower()} {self._code_args[0]} with args {self._code_args[1:]}")
 
         if self._code_args is not None:
+            sys.argv = list(self._code_args)
             if self._code_type == CodeType.MODULE:
-                sys.argv = argv[argv.index("-m") + 1:]
                 self._run_module()
             elif self._code_type == CodeType.FILE:
-                sys.argv = argv[argv.index("-f") + 1:]
                 self._run_file()
 
         sys.argv = argv
