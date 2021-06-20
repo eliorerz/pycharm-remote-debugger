@@ -35,3 +35,5 @@ pip install pycharm_remote_debugger
    ```
 6. Start debugger on pycharm
 7. Debug your program :) 
+
+## Arguments:

@@ -12,14 +12,14 @@ def get_args():
     parser.add_argument("-t", "--timeout", help="Connection timeout", type=int,
                         default=PycharmRemoteDebugger.DEFAULT_CONNECTION_TIMEOUT)
     parser.add_argument("-m", "--module", help="Module to run", type=str, nargs="...")
-    parser.add_argument("-f", "--file", help="Python script to run", type=str, nargs="...")
+    parser.add_argument("script", nargs="...")
     args = parser.parse_args()
 
     if not args.port or not args.remote:
         raise ValueError("Missing remote IDE arguments - try: remote_debugger -r <remote_address> -p <port> ... ")
 
-    if args.port is None and args.module is None:
-        raise ValueError("Missing script or module to execute")
+    if args.script is None and args.module is None:
+        raise ValueError("Missing script path or module to execute")
 
     return args
 
@@ -27,7 +27,7 @@ def get_args():
 def main():
     args = get_args()
     code_type = CodeType.MODULE if args.module else CodeType.FILE
-    debugger = PycharmRemoteDebugger(args.remote, args.port, code_type, args.module or args.file, args.optional)
+    debugger = PycharmRemoteDebugger(args.remote, args.port, code_type, args.module or args.script, args.optional)
     debugger.debug(args.timeout)
 
 
