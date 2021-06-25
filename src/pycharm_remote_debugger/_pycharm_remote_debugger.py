@@ -38,25 +38,22 @@ class PycharmRemoteDebugger:
         f = io.StringIO()
 
         with redirect_stderr(f):
-            try:
-                log.info(f"Trying to connect to the remote IDE {self._remote_machine}:{self._port}")
-                pydevd_pycharm.settrace(self._remote_machine, port=self._port, stdoutToServer=True, stderrToServer=True)
-                log.info(f"Debugger connected to IDE successfully")
-                return True
-            except ConnectionRefusedError as e:
-                log.error(f"Error occurred while connecting to remote IDE, {e}")
-                return False
+            pydevd_pycharm.settrace(self._remote_machine, port=self._port, stdoutToServer=True, stderrToServer=True)
+            log.info(f"Debugger connected to IDE successfully")
+            return True
 
     def _wait_for_debugger(self, timeout=DEFAULT_CONNECTION_TIMEOUT):
         try:
+            log.info(f"Trying to connect to the remote IDE {self._remote_machine}:{self._port}")
             waiting.wait(
                 lambda: self._debugger_login(),
                 timeout_seconds=timeout,
                 sleep_seconds=1,
-                waiting_for="remote debugger to be ready"
+                waiting_for="remote debugger to be ready",
+                expected_exceptions=(ConnectionRefusedError,)
             )
-        except socket.timeout:
-            log.error(f"Timeout reached after {timeout} seconds")
+        except (socket.timeout, waiting.exceptions.TimeoutExpired):
+            log.error(f"Error occurred while connecting to remote IDE. Timeout reached after {timeout} seconds.")
             if not self._optional:
                 raise
 
@@ -67,7 +64,7 @@ class PycharmRemoteDebugger:
         try:
             run_module_as_main = runpy._run_module_as_main
         except AttributeError:
-            log.warning("Can't find runpy._run_module_as_main module.")
+            log.warning("Can't find runpy._run_module_as_main method.")
             runpy.run_module(self._code_args[0], alter_sys=True)
         else:
             run_module_as_main(self._code_args[0], alter_argv=True)
