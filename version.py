@@ -25,7 +25,7 @@ class GitVersion:
         version = custom_version or version
 
         print(f"Adding new tag {version}")
-        cls.sys_exec(f"git tag -a {version} -m ".split() + [" '{cls.CI_FLAG} - Version {version}'"])
+        cls.sys_exec(f"git tag -a {version} -m ".split() + [f" '{cls.CI_FLAG} - Version {version}'"])
         cls.sys_exec("git push origin --tags".split())
 
     @classmethod
